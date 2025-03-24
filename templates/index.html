@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>웹 챗봇</title>
+    <script>
+        async function sendMessage() {
+            let input = document.getElementById("userMessage").value;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: input })
+            });
+            const data = await response.json();
+            document.getElementById("chatBox").innerHTML += "<p><strong>나:</strong> " + input + "</p>";
+            document.getElementById("chatBox").innerHTML += "<p><strong>봇:</strong> " + data.reply + "</p>";
+            if (data.image) {
+                if (Array.isArray(data.image)) {
+                    data.image.forEach(function(img) {
+                        document.getElementById("chatBox").innerHTML += `<img src="${img}" style="width:200px; margin-top:5px;">`;
+                    });
+                } else {
+                    document.getElementById("chatBox").innerHTML += `<img src="${data.image}" style="width:200px; margin-top:5px;">`;
+                }
+            }
+            document.getElementById("userMessage").value = "";
+        }
+    </script>
+</head>
+<body>
+    <h1>챗봇과 대화하기</h1>
+    <div id="chatBox" style="border:1px solid #ccc; padding:10px; width:400px; height:300px; overflow:auto;"></div>
+    <input type="text" id="userMessage" placeholder="메시지를 입력하세요" style="width:300px;">
+    <button onclick="sendMessage()">전송</button>
+</body>
+</html>
